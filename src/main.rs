@@ -64,10 +64,14 @@ mod qf_encode {
     fn process_wall(mv: &str, qf_bin: &mut String, xalpha: &str, turn: &mut usize) -> Result<(), QFError> {
         qf_bin.push('1');
 
-        let direction_bit = if mv.chars().nth(2).unwrap() == 'h' { '0' } else { '1' };
+        let direction_bit = if let Some(c) = mv.chars().nth(2) {
+            if c == 'h' { '0' } else { '1' }
+        } else {
+            return Err(QFError::QFError);
+        };
         qf_bin.push(direction_bit);
 
-        let x = (xalpha.find(mv.chars().nth(0).unwrap()).ok_or(QFError::QFError)? + 1) as i32;
+        let x = (xalpha.find(mv.chars().nth(0).ok_or(QFError::QFError)?).ok_or(QFError::QFError)? + 1) as i32;
         let y = mv.chars().nth(1).and_then(|c| c.to_digit(10)).ok_or(QFError::QFError)? as i32;
 
         let wallplace = ((x - 1) + (y - 1) * 8) as usize;
