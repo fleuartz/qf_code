@@ -66,7 +66,12 @@ mod qf_encode {
         Ok(())
     }
 
-    fn process_wall(mv: &str, qf_bin: &mut String, xalpha: &str, turn: &mut usize) -> Result<(), QFError> {
+    fn process_wall(
+        mv: &str, 
+        qf_bin: &mut String, 
+        xalpha: &str, 
+        turn: &mut usize,
+    ) -> Result<(), QFError> {
         qf_bin.push('1');
 
         let direction_bit = if let Some(c) = mv.chars().nth(2) {
@@ -216,16 +221,15 @@ mod qf_decode {
 fn main() {
     let notation = "e2,e2v,f2h,e8,h2h,e7,d6h,f7,f6h,e7,d2,d7,c7v,d8,d3,d3h,c3,b3h,a2h,d9,b3,c9,a3,c8,c5v,c2v,h6h,c7,a4,c6,a5,a5h,b5,b6h,a7v,b1v,c5,c4,c6,b4,b6,a4,a6";
     match qf_encode::encode(notation) {
-        Ok(qf_code) => println!("{}", qf_code),
+        Ok(qf_code) => println!("Encode: ({}) -> {}", notation, qf_code),
         Err(err) => eprintln!("Error: {:?}", err),
     }
 
     let qf_code = "QrDMjUj0qyrWZvIAk2kYgGZk4sqvQECgKp8MEkBmZg";
     match qf_decode::decode(qf_code) {
-        Ok(notation) => println!("{}", notation),
+        Ok(notation) => println!("Decode: ({}) -> {}", qf_code, notation),
         Err(err) => eprintln!("Error: {:?}", err),
     }
-
 }
 
 #[cfg(test)]
