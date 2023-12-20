@@ -1,5 +1,9 @@
+
+
 mod qf_encode;
 mod qf_decode;
+mod to_qf;
+
 
 fn main() {
     let notation = "e2,e2v,f2h,e8,h2h,e7,d6h,f7,f6h,e7,d2,d7,c7v,d8,d3,d3h,c3,b3h,a2h,d9,b3,c9,a3,c8,c5v,c2v,h6h,c7,a4,c6,a5,a5h,b5,b6h,a7v,b1v,c5,c4,c6,b4,b6,a4,a6";
@@ -13,6 +17,13 @@ fn main() {
         Ok(notation) => println!("Decode: ({}) -> {}", qf_code, notation),
         Err(err) => eprintln!("Error: {:?}", err),
     }
+
+    let directory_path = "Replay";
+    match to_qf::to_qf_code(directory_path) {
+        Ok(_) => (),
+        Err(err) => eprintln!("Error: {:?}", err),
+    }
+
 }
 
 #[cfg(test)]
