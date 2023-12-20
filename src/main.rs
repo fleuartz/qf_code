@@ -44,7 +44,7 @@ mod tests {
     fn test_qf_encode4() {
         let notation = "aaa,aaaa";
         let result = qf_encode::encode(notation);
-        assert_eq!(result, Err(qf_encode::QFError::QFError));
+        assert_eq!(result, Err(qf_encode::QFError::QFEncodeError));
     }
 
     #[test]
@@ -69,5 +69,12 @@ mod tests {
         let result = qf_encode::encode(notation);
         let notation_decoded = qf_decode::decode(&result.unwrap());
         assert_eq!(notation_decoded, Ok(notation.to_string()));
+    }
+
+    #[test]
+    fn test_qf_decode4() {
+        let result = "AAAAAAA".to_string();
+        let notation_decoded = qf_decode::decode(&result);
+        assert_eq!(notation_decoded, Err(qf_decode::QFError::QFDecodeError));
     }
 }

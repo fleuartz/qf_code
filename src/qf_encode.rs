@@ -1,6 +1,6 @@
 #[derive(Debug, PartialEq)]
 pub enum QFError {
-    QFError,
+    QFEncodeError,
 }
 
 pub fn encode(notation: &str) -> Result<String, QFError> {
@@ -11,7 +11,7 @@ pub fn encode(notation: &str) -> Result<String, QFError> {
     let mvlist: Vec<&str> = notation.split(',').collect();
     
     if mvlist.len() > 1023 {
-        return Err(QFError::QFError);
+        return Err(QFError::QFEncodeError);
     }
 
     let mvlen_bin = format!("{:010b}", mvlist.len());
@@ -26,12 +26,12 @@ pub fn encode(notation: &str) -> Result<String, QFError> {
         } else if mv.len() == 3 {
             process_wall(mv, &mut qf_bin, xalpha, &mut turn)?;
         } else {
-            return Err(QFError::QFError);
+            return Err(QFError::QFEncodeError);
         }
     }
 
     pad_binary_string(&mut qf_bin);
-    convert_to_base64(&qf_bin, b64chars).map_err(|_| QFError::QFError)
+    convert_to_base64(&qf_bin, b64chars).map_err(|_| QFError::QFEncodeError)
 }
 
 fn process_move(
@@ -43,8 +43,8 @@ fn process_move(
 ) -> Result<(), QFError> {
     qf_bin.push('0');
 
-    let newx = xalpha.find(mv.chars().nth(0).unwrap()).ok_or(QFError::QFError)? as i32 + 1;
-    let newy = mv.chars().nth(1).and_then(|c| c.to_digit(10)).ok_or(QFError::QFError)? as i32;
+    let newx = xalpha.find(mv.chars().nth(0).unwrap()).ok_or(QFError::QFEncodeError)? as i32 + 1;
+    let newy = mv.chars().nth(1).and_then(|c| c.to_digit(10)).ok_or(QFError::QFEncodeError)? as i32;
     let (oldx, oldy) = (p[*turn].1, p[*turn].3);
 
     let direction = match (newx - oldx, newy - oldy) {
@@ -52,7 +52,7 @@ fn process_move(
         (-1, 0) | (-2, 0) => 6,
         (0, 1) | (0, 2) => 0,
         (0, -1) | (0, -2) => 4,
-        _ => return Err(QFError::QFError),
+        _ => return Err(QFError::QFEncodeError),
     };
 
     p[*turn] = ("x", newx, "y", newy);
@@ -76,12 +76,12 @@ fn process_wall(
     let direction_bit = if let Some(c) = mv.chars().nth(2) {
         if c == 'h' { '0' } else { '1' }
     } else {
-        return Err(QFError::QFError);
+        return Err(QFError::QFEncodeError);
     };
     qf_bin.push(direction_bit);
 
-    let x = (xalpha.find(mv.chars().nth(0).ok_or(QFError::QFError)?).ok_or(QFError::QFError)? + 1) as i32;
-    let y = mv.chars().nth(1).and_then(|c| c.to_digit(10)).ok_or(QFError::QFError)? as i32;
+    let x = (xalpha.find(mv.chars().nth(0).ok_or(QFError::QFEncodeError)?).ok_or(QFError::QFEncodeError)? + 1) as i32;
+    let y = mv.chars().nth(1).and_then(|c| c.to_digit(10)).ok_or(QFError::QFEncodeError)? as i32;
 
     let wallplace = ((x - 1) + (y - 1) * 8) as usize;
 
@@ -103,8 +103,8 @@ fn convert_to_base64(qf_bin: &String, b64chars: &str) -> Result<String, QFError>
         .collect::<Vec<char>>()
         .chunks(6)
         .map(|chunk| {
-            let index = usize::from_str_radix(chunk.iter().collect::<String>().as_str(), 2).map_err(|_| QFError::QFError)?;
-            b64chars.chars().nth(index).ok_or(QFError::QFError)
+            let index = usize::from_str_radix(chunk.iter().collect::<String>().as_str(), 2).map_err(|_| QFError::QFEncodeError)?;
+            b64chars.chars().nth(index).ok_or(QFError::QFEncodeError)
         })
         .collect::<Result<Vec<_>, _>>()
         .map(|chars| chars.into_iter().collect())?;
