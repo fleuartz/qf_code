@@ -1,5 +1,3 @@
-
-
 mod qf_encode;
 mod qf_decode;
 mod to_qf;
@@ -23,7 +21,6 @@ fn main() {
         Ok(_) => (),
         Err(err) => eprintln!("Error: {:?}", err),
     }
-
 }
 
 #[cfg(test)]
