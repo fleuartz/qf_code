@@ -1,6 +1,6 @@
 mod qf_encode;
 mod qf_decode;
-mod to_qf;
+mod convert_html_to_qf;
 
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     }
 
     let directory_path = "Replay";
-    match to_qf::to_qf_code(directory_path) {
+    match convert_html_to_qf::to_qf_code(directory_path) {
         Ok(_) => (),
         Err(err) => eprintln!("Error: {:?}", err),
     }
