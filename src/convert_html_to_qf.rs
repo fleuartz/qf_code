@@ -58,7 +58,7 @@ fn process_html_file(file_path: &str) -> Result<(), Box<dyn Error>> {
     let notations_str = notations.join(",");
 
     match encode(&notations_str) {
-        Ok(qf_code) => println!("Encode ({}) -> {}", file_path, qf_code),
+        Ok(qf_code) => println!("{} <- ({})", qf_code, file_path),
         Err(err) => eprintln!("Error encoding notations: {:?}", err),
     }
 
