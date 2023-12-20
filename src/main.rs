@@ -2,14 +2,62 @@ mod qf_encode;
 mod qf_decode;
 mod convert_html_to_qf;
 
+use structopt::StructOpt;
+use std::path::Path;
+
+
+#[derive(Debug, StructOpt)]
+#[structopt(name = "QF Encoder/Decoder", about = "Encode, decode, or convert HTML to QF code")]
+struct Opt {
+    #[structopt(subcommand)]
+    cmd: Command,
+}
+
+#[derive(Debug, StructOpt)]
+enum Command {
+    #[structopt(name = "encode", about = "Encode the given notation")]
+    Encode {
+        #[structopt(value_name = "notation", help = "Notation to encode")]
+        notation: String,
+    },
+    #[structopt(name = "decode", about = "Decode the given QF code")]
+    Decode {
+        #[structopt(value_name = "qf_code", help = "QF code to decode")]
+        qf_code: String,
+    },
+    #[structopt(name = "convert", about = "Convert HTML files in the given directory to QF code")]
+    Convert {
+        #[structopt(value_name = "directory_name", help = "Directory path")]
+        directory_name: String,
+    },
+}
 
 fn main() {
-    let directory_path = "Replay";
-    match convert_html_to_qf::to_qf_code(directory_path) {
-        Ok(_) => (),
-        Err(err) => eprintln!("Error: {:?}", err),
+    let opt = Opt::from_args();
+
+    match opt.cmd {
+        Command::Encode { notation } => match qf_encode::encode(&notation) {
+            Ok(qf_code) => println!("Encode: ({}) -> {}", notation, qf_code),
+            Err(err) => eprintln!("Error: {:?}", err),
+        },
+        Command::Decode { qf_code } => match qf_decode::decode(&qf_code) {
+            Ok(notation) => println!("Decode: ({}) -> {}", qf_code, notation),
+            Err(err) => eprintln!("Error: {:?}", err),
+        },
+        Command::Convert { directory_name } => {
+            if Path::new(&directory_name).is_dir() {
+                match convert_html_to_qf::convert(&directory_name) {
+                    Ok(_) => (),
+                    Err(err) => eprintln!("Error: {:?}", err),
+                }
+            } else {
+                eprintln!("Error: The provided path is not a directory");
+            }
+        },
     }
 }
+
+
 
 #[cfg(test)]
 mod tests {

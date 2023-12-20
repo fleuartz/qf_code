@@ -18,7 +18,7 @@ impl fmt::Display for QFError {
 
 impl Error for QFError {}
 
-pub fn to_qf_code(directory_path: &str) -> Result<(), Box<dyn Error>> {
+pub fn convert(directory_path: &str) -> Result<(), Box<dyn Error>> {
     let entries = fs::read_dir(directory_path).map_err(|_| QFError::QFFileError)?;
 
     for entry in entries {
