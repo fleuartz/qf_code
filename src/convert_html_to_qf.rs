@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fmt;
 use std::fs;
 use std::io::Read;
+use colored::*;
 
 #[derive(Debug, PartialEq)]
 pub enum QFError {
@@ -19,6 +20,7 @@ impl fmt::Display for QFError {
 impl Error for QFError {}
 
 pub fn convert(directory_path: &str) -> Result<(), Box<dyn Error>> {
+    println!("{} \\{}", "Convert:".yellow().bold(), directory_path);
     let entries = fs::read_dir(directory_path).map_err(|_| QFError::QFFileError)?;
 
     for entry in entries {
@@ -45,7 +47,7 @@ fn process_html_file(file_path: &str) -> Result<(), Box<dyn Error>> {
     let script_tag = match re.captures(&contents) {
         Some(captures) => captures.name("script").map_or("", |m| m.as_str()),
         None => {
-            eprintln!("Error: No script tag found in {}", file_path);
+            eprintln!("{} No script tag found in {}", "Error:".red().bold(), file_path);
             return Ok(());
         }
     };
@@ -59,7 +61,7 @@ fn process_html_file(file_path: &str) -> Result<(), Box<dyn Error>> {
 
     match encode(&notations_str) {
         Ok(qf_code) => println!("{} <- ({})", qf_code, file_path),
-        Err(err) => eprintln!("Error encoding notations: {:?}", err),
+        Err(err) => eprintln!("{} encoding notations: {:?}", "Error:".red().bold(), err),
     }
 
     Ok(())
