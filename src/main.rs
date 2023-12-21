@@ -9,7 +9,7 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 #[structopt(
     name = "QF Encoder/Decoder",
-    about = "Encode, decode, or convert HTML to QF code"
+    about = "Encode, decode, or convert HTML to qf_code"
 )]
 struct Opt {
     /// Encode the given notation
@@ -21,7 +21,7 @@ struct Opt {
     )]
     encode: Option<String>,
 
-    /// Decode the given QF code
+    /// Decode the given qf_code
     #[structopt(
         short = "d",
         long = "decode",
@@ -30,7 +30,7 @@ struct Opt {
     )]
     decode: Option<String>,
 
-    /// Convert HTML files in the given directory to QF code
+    /// Convert HTML files in the given directory to qf_code and save the results in a log file
     #[structopt(
         short = "c",
         long = "convert",
