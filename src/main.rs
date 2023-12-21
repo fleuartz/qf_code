@@ -2,22 +2,41 @@ mod qf_encode;
 mod qf_decode;
 mod convert_html_to_qf;
 
-use structopt::StructOpt;
+use colored::*;
 use std::path::Path;
+use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "QF Encoder/Decoder", about = "Encode, decode, or convert HTML to QF code")]
+#[structopt(
+    name = "QF Encoder/Decoder",
+    about = "Encode, decode, or convert HTML to QF code"
+)]
 struct Opt {
     /// Encode the given notation
-    #[structopt(short = "e", long = "encode", value_name = "notation", conflicts_with_all(&["decode", "convert"]))]
+    #[structopt(
+        short = "e",
+        long = "encode",
+        value_name = "notation",
+        conflicts_with_all(&["decode", "convert"])
+    )]
     encode: Option<String>,
 
     /// Decode the given QF code
-    #[structopt(short = "d", long = "decode", value_name = "qf_code", conflicts_with_all(&["encode", "convert"]))]
+    #[structopt(
+        short = "d",
+        long = "decode",
+        value_name = "qf_code",
+        conflicts_with_all(&["encode", "convert"])
+    )]
     decode: Option<String>,
 
     /// Convert HTML files in the given directory to QF code
-    #[structopt(short = "c", long = "convert", value_name = "directory_path", conflicts_with_all(&["encode", "decode"]))]
+    #[structopt(
+        short = "c",
+        long = "convert",
+        value_name = "directory_path",
+        conflicts_with_all(&["encode", "decode"])
+    )]
     convert: Option<String>,
 }
 
@@ -25,27 +44,49 @@ fn main() {
     let opt = Opt::from_args();
 
     match opt {
-        Opt { encode: Some(notation), .. } => match qf_encode::encode(&notation) {
-            Ok(qf_code) => println!("Encode: ({}) -> {}", notation, qf_code),
-            Err(err) => eprintln!("Error: {:?}", err),
+        Opt {
+            encode: Some(notation),
+            ..
+        } => match qf_encode::encode(&notation) {
+            Ok(qf_code) => println!(
+                "{} ({}) -> {}",
+                "Encode:".green().bold(),
+                notation,
+                qf_code
+            ),
+            Err(err) => eprintln!("{} {:?}", "Error:".red().bold(), err),
         },
-        Opt { decode: Some(qf_code), .. } => match qf_decode::decode(&qf_code) {
-            Ok(notation) => println!("Decode: ({}) -> {}", qf_code, notation),
-            Err(err) => eprintln!("Error: {:?}", err),
+        Opt {
+            decode: Some(qf_code),
+            ..
+        } => match qf_decode::decode(&qf_code) {
+            Ok(notation) => println!(
+                "{} ({}) -> {}",
+                "Decode:".blue().bold(),
+                qf_code,
+                notation
+            ),
+            Err(err) => eprintln!("{} {:?}", "Error:".red().bold(), err),
         },
-        Opt { convert: Some(directory_name), .. } => {
+        Opt {
+            convert: Some(directory_name),
+            ..
+        } => {
             if Path::new(&directory_name).is_dir() {
                 match convert_html_to_qf::convert(&directory_name) {
                     Ok(_) => (),
-                    Err(err) => eprintln!("Error: {:?}", err),
+                    Err(err) => eprintln!("{} {:?}", "Error:".red().bold(), err),
                 }
             } else {
-                eprintln!("Error: The provided path is not a directory");
+                eprintln!("{} The provided path is not a directory", "Error:".red().bold());
             }
-        },
-        _ => eprintln!("Error: Please provide one of the options (-e, -d, -c), or use --help for more information"),
+        }
+        _ => eprintln!(
+            "Please provide one of the options (-e, -d, -c), or use --help for more information"
+        ),
     }
 }
+
 
 
 #[cfg(test)]
