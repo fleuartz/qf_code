@@ -82,7 +82,11 @@ fn main() {
             }
         }
         _ => eprintln!(
-            "Please provide one of the options (-e, -d, -c), or use --help for more information"
+            "Please provide one of the options ({}, {}, {}), or use {} for more information",
+            "-e".green().bold(),
+            "-d".blue().bold(),
+            "-c".yellow().bold(),
+            "--help".bold()
         ),
     }
 }
