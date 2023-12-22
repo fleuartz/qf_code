@@ -111,7 +111,6 @@ fn process_html_file(
         }
         Err(err) => {
             eprintln!("{} encoding notations: {:?}", "Error:".red().bold(), err);
-            writeln!(log_file, "{} encoding notations: {:?}", "Error:".red().bold(), err)?;
         }
     }
 
